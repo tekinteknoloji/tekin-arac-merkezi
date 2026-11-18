@@ -1,0 +1,1 @@
+Bu klasör hub'ın çalışma verisini tutar (token.txt, secimler.json). Git'e eklenmez.

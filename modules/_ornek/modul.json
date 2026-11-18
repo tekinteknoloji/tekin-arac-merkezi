@@ -1,0 +1,7 @@
+{
+  "ad": "Örnek Araç",
+  "aciklama": "Kopyalayıp kendi aracınıza uyarlayın. Klasör adı '_' ile başladığı için hub bunu listelemez.",
+  "tur": "bat",
+  "baslat": "start.bat",
+  "port": 8080
+}

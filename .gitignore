@@ -1,0 +1,7 @@
+data/*
+!data/BENI-OKU.txt
+modules/*
+!modules/README.md
+!modules/_ornek/
+node_modules/
+*.log

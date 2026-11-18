@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tekin Araç Merkezi</title>
+  <style>
+    :root { --bg:#0d1117; --panel:#161b22; --kenar:#30363d; --yazi:#e6edf3; --soluk:#8b949e;
+            --yesil:#3fb950; --kirmizi:#f85149; --mavi:#58a6ff; --sari:#d29922; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: "Segoe UI", system-ui, sans-serif; background:var(--bg); color:var(--yazi); }
+    header { display:flex; align-items:center; gap:16px; padding:14px 22px; border-bottom:1px solid var(--kenar); flex-wrap:wrap; }
+    header h1 { font-size:18px; margin:0; font-weight:600; }
+    header input { margin-left:auto; background:var(--panel); border:1px solid var(--kenar); color:var(--yazi);
+                   padding:8px 12px; border-radius:6px; width:260px; }
+    main { padding:20px 22px; display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:16px; }
+    .kart { background:var(--panel); border:1px solid var(--kenar); border-radius:10px; padding:16px; display:flex; flex-direction:column; gap:10px; }
+    .kart h2 { font-size:16px; margin:0; display:flex; align-items:center; gap:8px; }
+    .aciklama { color:var(--soluk); font-size:13px; min-height:18px; }
+    .meta { color:var(--soluk); font-size:12px; font-family: Consolas, monospace; word-break:break-all; }
+    .rozet { font-size:11px; padding:2px 8px; border-radius:10px; border:1px solid currentColor; }
+    .calisiyor { color:var(--yesil); } .durdu { color:var(--soluk); } .hata { color:var(--kirmizi); } .izlenmiyor { color:var(--sari); }
+    .butonlar { display:flex; gap:8px; flex-wrap:wrap; margin-top:auto; }
+    button { background:#21262d; color:var(--yazi); border:1px solid var(--kenar); border-radius:6px; padding:6px 12px; cursor:pointer; font-size:13px; }
+    button:hover:not(:disabled) { border-color:var(--mavi); }
+    button:disabled { opacity:.45; cursor:not-allowed; }
+    button.birincil { background:#238636; border-color:#2ea043; }
+    button.tehlike { border-color:var(--kirmizi); color:var(--kirmizi); }
+    #bildirim { position:fixed; bottom:18px; right:18px; background:var(--panel); border:1px solid var(--kenar);
+                padding:10px 14px; border-radius:8px; font-size:13px; display:none; max-width:420px; }
+    #log { position:fixed; inset:auto 18px 18px 18px; max-height:45vh; background:#010409; border:1px solid var(--kenar);
+           border-radius:10px; display:none; flex-direction:column; }
+    #log .baslik { display:flex; align-items:center; padding:8px 12px; border-bottom:1px solid var(--kenar); }
+    #log .baslik span { flex:1; font-weight:600; font-size:13px; }
+    #log pre { margin:0; padding:10px 12px; overflow:auto; font:12px Consolas, monospace; white-space:pre-wrap; color:#c9d1d9; }
+    footer { padding:14px 22px; color:var(--soluk); font-size:12px; border-top:1px solid var(--kenar); margin-top:20px; }
+    footer a { color:var(--mavi); text-decoration:none; }
+    .bos { color:var(--soluk); padding:30px; }
+    .otomatik { color:var(--mavi); } .secili { color:var(--sari); }
+    #secim { position:fixed; inset:0; background:rgba(1,4,9,.7); display:none; align-items:center; justify-content:center; padding:20px; }
+    #secim .kutu { background:var(--panel); border:1px solid var(--kenar); border-radius:10px; width:min(560px,100%); max-height:80vh; display:flex; flex-direction:column; }
+    #secim .baslik { padding:12px 16px; border-bottom:1px solid var(--kenar); font-weight:600; }
+    #secim .icerik { padding:10px 16px; overflow:auto; display:flex; flex-direction:column; gap:6px; }
+    #secim label { display:flex; gap:8px; align-items:flex-start; font:13px Consolas, monospace; word-break:break-all; cursor:pointer; padding:4px 0; }
+    #secim .alt { display:flex; gap:8px; padding:12px 16px; border-top:1px solid var(--kenar); }
+    #secim .alt .bosluk { flex:1; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Tekin Araç Merkezi</h1>
+    <span id="sayac" class="meta"></span>
+    <input id="ara" type="search" placeholder="Modül ara…" autocomplete="off">
+    <button id="yenile" title="Listeyi yenile">Yenile</button>
+  </header>
+
+  <main id="liste"><div class="bos">Modüller yükleniyor…</div></main>
+
+  <div id="log">
+    <div class="baslik">
+      <span id="logBaslik">Loglar</span>
+      <button id="logKapat">Kapat</button>
+    </div>
+    <pre id="logIcerik"></pre>
+  </div>
+
+  <div id="secim">
+    <div class="kutu">
+      <div class="baslik" id="secimBaslik">Başlatıcı seç</div>
+      <div class="icerik" id="secimIcerik"></div>
+      <div class="alt">
+        <button class="birincil" id="secimKaydet">Kaydet</button>
+        <button id="secimTemizle" title="Seçimi kaldırır; modul.json veya otomatik algılama kullanılır">Otomatiğe dön</button>
+        <span class="bosluk"></span>
+        <button id="secimKapat">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="bildirim"></div>
+
+  <footer>
+    Tekin Teknoloji · <a href="https://tekinteknoloji.com" target="_blank" rel="noopener">tekinteknoloji.com</a>
+    · Kurumsal BT desteği mi lazım? <a href="https://tekinteknoloji.com" target="_blank" rel="noopener">tekinteknoloji.com</a>
+    · Ücretsiz ve reklamsız. <a href="https://github.com/sponsors/tekinteknoloji" target="_blank" rel="noopener">❤ Destek ol</a>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "tekin-arac-merkezi",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Tekin Teknoloji modüler BT araç merkezi — web kontrol paneli",
+  "main": "hub/server.js",
+  "scripts": {
+    "start": "node hub/server.js",
+    "test": "node --test hub/test/registry.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}
